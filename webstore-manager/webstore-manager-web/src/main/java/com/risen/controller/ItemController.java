@@ -5,9 +5,11 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.risen.common.pojo.EUIDataGridResult;
+import com.risen.common.utils.Result;
 import com.risen.pojo.TbItem;
 import com.risen.service.ItemService;
 
@@ -33,10 +35,28 @@ public class ItemController {
 		return item;
 	}
 	
+	/**
+	 * 后台管理查询商品列表
+	 * @param page
+	 * @param rows
+	 * @return
+	 */
 	@RequestMapping("/item/list")
 	@ResponseBody
 	public EUIDataGridResult getItemList(Integer page,Integer rows){
 		EUIDataGridResult result = itemServiceImpl.getItemList(page, rows);
 		return result;
+	}
+	
+	/**
+	 * 后台管理新增商品
+	 * @return
+	 */
+	@RequestMapping(value="/item/save",method=RequestMethod.POST)
+	@ResponseBody
+	public Result createItem(TbItem item,String desc){
+		Result result=itemServiceImpl.createItem(item,desc);
+		return result;
+		
 	}
 }

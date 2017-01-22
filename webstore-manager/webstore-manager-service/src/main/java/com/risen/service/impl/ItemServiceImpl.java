@@ -1,5 +1,6 @@
 package com.risen.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -9,8 +10,12 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.risen.common.pojo.EUIDataGridResult;
+import com.risen.common.utils.IDUtil;
+import com.risen.common.utils.Result;
+import com.risen.mapper.TbItemDescMapper;
 import com.risen.mapper.TbItemMapper;
 import com.risen.pojo.TbItem;
+import com.risen.pojo.TbItemDesc;
 import com.risen.pojo.TbItemExample;
 import com.risen.pojo.TbItemExample.Criteria;
 import com.risen.service.ItemService;
@@ -24,7 +29,9 @@ public class ItemServiceImpl implements ItemService {
 	
 	@Resource
 	private TbItemMapper itemMapper;
-	private List<TbItem> selectByExample;
+	
+	@Resource
+	private TbItemDescMapper itemDescMapper;
 	
 	@Override
 	public TbItem getItemById(long itemId) {
@@ -66,6 +73,45 @@ public class ItemServiceImpl implements ItemService {
 		result.setTotal(pageInfo.getTotal());
 		//返回
 		return result;
+	}
+	
+	/**
+	 * 新增商品
+	 */
+	@Override
+	public Result createItem(TbItem item,String desc) {
+		//参数补全
+		//生成商品id
+		Long itemId=IDUtil.genItemId();
+		item.setId(itemId);
+		//商品状态，1-正常，2-下架，3-删除
+		item.setStatus((byte) 1);
+		item.setCreated(new Date());
+		item.setUpdated(new Date());
+		//插入到数据库
+		itemMapper.insert(item);
+		
+		//添加商品描述
+		insertItemDesc(desc, itemId);
+		return Result.ok();
+	}
+	
+	/**
+	 * 添加商品描述
+	 * @param desc
+	 * @return
+	 */
+	private Result insertItemDesc(String desc,Long itemId){
+		//dao参数对象
+		TbItemDesc itemDesc=new TbItemDesc();
+		//设置参数对象的属性值
+		itemDesc.setItemId(itemId);
+		itemDesc.setItemDesc(desc);
+		itemDesc.setCreated(new Date());
+		itemDesc.setUpdated(new Date());
+		//插入数据
+		itemDescMapper.insert(itemDesc);
+		return Result.ok();
 	}
 
 }
