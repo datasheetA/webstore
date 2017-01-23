@@ -54,8 +54,8 @@ public class ItemController {
 	 */
 	@RequestMapping(value="/item/save",method=RequestMethod.POST)
 	@ResponseBody
-	public Result createItem(TbItem item,String desc){
-		Result result=itemServiceImpl.createItem(item,desc);
+	public Result createItem(TbItem item,String desc,String itemParams){
+		Result result=itemServiceImpl.createItem(item,desc,itemParams);
 		return result;
 		
 	}

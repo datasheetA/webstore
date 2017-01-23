@@ -14,10 +14,12 @@ import com.risen.common.utils.IDUtil;
 import com.risen.common.utils.Result;
 import com.risen.mapper.TbItemDescMapper;
 import com.risen.mapper.TbItemMapper;
+import com.risen.mapper.TbItemParamItemMapper;
 import com.risen.pojo.TbItem;
 import com.risen.pojo.TbItemDesc;
 import com.risen.pojo.TbItemExample;
 import com.risen.pojo.TbItemExample.Criteria;
+import com.risen.pojo.TbItemParamItem;
 import com.risen.service.ItemService;
 
 /**
@@ -32,6 +34,9 @@ public class ItemServiceImpl implements ItemService {
 	
 	@Resource
 	private TbItemDescMapper itemDescMapper;
+	
+	@Resource
+	private TbItemParamItemMapper itemParamItemMapper;
 	
 	@Override
 	public TbItem getItemById(long itemId) {
@@ -79,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
 	 * 新增商品
 	 */
 	@Override
-	public Result createItem(TbItem item,String desc) {
+	public Result createItem(TbItem item,String desc,String itemParams) {
 		//参数补全
 		//生成商品id
 		Long itemId=IDUtil.genItemId();
@@ -93,6 +98,10 @@ public class ItemServiceImpl implements ItemService {
 		
 		//添加商品描述
 		insertItemDesc(desc, itemId);
+		
+		//添加商品规格参数
+		insertItemParamItem(itemParams, itemId);
+		
 		return Result.ok();
 	}
 	
@@ -111,6 +120,26 @@ public class ItemServiceImpl implements ItemService {
 		itemDesc.setUpdated(new Date());
 		//插入数据
 		itemDescMapper.insert(itemDesc);
+		return Result.ok();
+	}
+	
+	/**
+	 * 添加商品规格参数
+	 * @param itemParams
+	 * @param itemId
+	 * @return
+	 */
+	private Result insertItemParamItem(String itemParams,Long itemId){
+		//创建pojo
+		TbItemParamItem itemParamItem=new TbItemParamItem();
+		//设置属性值
+		itemParamItem.setItemId(itemId);
+		itemParamItem.setParamData(itemParams);
+		itemParamItem.setCreated(new Date());
+		itemParamItem.setUpdated(new Date());
+		//写入数据库
+		itemParamItemMapper.insert(itemParamItem);
+		
 		return Result.ok();
 	}
 

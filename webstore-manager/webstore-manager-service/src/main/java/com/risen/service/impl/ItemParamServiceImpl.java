@@ -1,5 +1,6 @@
 package com.risen.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ public class ItemParamServiceImpl implements ItemParamService{
 				//分页处理
 				PageHelper.startPage(page, rows);
 				//执行查询
-				List<TbItemParam> list = itemParamMapper.selectByExample(example);
+				List<TbItemParam> list = itemParamMapper.selectByExampleWithBLOBs(example);
 				
 				//EasyUI的结果对象
 				EUIDataGridResult result=new EUIDataGridResult();
@@ -58,11 +59,25 @@ public class ItemParamServiceImpl implements ItemParamService{
 		Criteria criteria = example.createCriteria();
 		criteria.andItemCatIdEqualTo(cid);
 		//查询
-		List<TbItemParam> list = itemParamMapper.selectByExample(example);
+		List<TbItemParam> list = itemParamMapper.selectByExampleWithBLOBs(example);
 		//判断
 		if(list!=null && list.size()>0){
 			return Result.ok(list.get(0));
 		}
+		return Result.ok();
+	}
+	
+	/**
+	 * 新增规格参数模板
+	 */
+	@Override
+	public Result insertItemParam(TbItemParam itemParam) {
+		//补全参数
+		itemParam.setCreated(new Date());
+		itemParam.setUpdated(new Date());
+		//插入数据库
+		itemParamMapper.insert(itemParam);
+		
 		return Result.ok();
 	}
 

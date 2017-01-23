@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.risen.common.pojo.EUIDataGridResult;
 import com.risen.common.utils.Result;
+import com.risen.pojo.TbItemParam;
 import com.risen.service.ItemParamService;
 
 /**
@@ -47,5 +48,22 @@ public class ItemParamController {
 		Result result = itemParamService.getItemParamByCid(itemCatId);
 		return result;
 		
+	}
+	
+	/**
+	 * 新增规格参数模板
+	 */
+	@RequestMapping("/save/{cid}")
+	@ResponseBody
+	public Result insertItemParam(@PathVariable long cid,String paramData){
+		//创建pojo对象
+		TbItemParam itemParam=new TbItemParam();
+		//设置属性值
+		itemParam.setItemCatId(cid);
+		itemParam.setParamData(paramData);
+		//调用service完成数据插入
+		Result result = itemParamService.insertItemParam(itemParam);
+		//返回结果
+		return result;
 	}
 }

@@ -19,5 +19,5 @@ public interface ItemService {
 	/**
 	 * 增加商品
 	 */
-	Result createItem(TbItem item,String desc);
+	Result createItem(TbItem item,String desc,String itemParams);
 }
