@@ -28,7 +28,7 @@ public class PictureController {
 	 * @param uploadFile
 	 * @return
 	 */
-	@RequestMapping("pic/upload")
+	@RequestMapping("/pic/upload")
 	@ResponseBody
 	public String pictureUpload(MultipartFile uploadFile){
 		Map resultMap=pictureService.uploadPicture(uploadFile);

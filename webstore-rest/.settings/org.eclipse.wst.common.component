@@ -10,9 +10,6 @@
         <dependent-module archiveName="webstore-manager-pojo-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webstore-manager-pojo/webstore-manager-pojo">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pagehelper-3.4.2-fix.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pagehelper/pagehelper">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="webstore-common-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webstore-common/webstore-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
