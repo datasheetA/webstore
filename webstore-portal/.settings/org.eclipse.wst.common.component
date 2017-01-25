@@ -7,6 +7,9 @@
         <dependent-module archiveName="webstore-common-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webstore-common/webstore-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="webstore-manager-pojo-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webstore-manager-pojo/webstore-manager-pojo">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="webstore-portal"/>
         <property name="java-output-path" value="/webstore-portal/target/classes"/>
     </wb-module>

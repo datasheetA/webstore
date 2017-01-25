@@ -18,6 +18,12 @@
 			<artifactId>webstore-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<!-- webstore-manager-pojo -->
+		<dependency>
+			<groupId>com.risen</groupId>
+			<artifactId>webstore-manager-pojo</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	
 		<!-- Spring -->
 		<dependency>
