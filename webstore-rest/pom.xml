@@ -12,6 +12,12 @@
   
   <!-- 依赖管理 -->
   <dependencies>
+  		<!-- 单元测试 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
   		<dependency>
   			<groupId>com.risen</groupId>
   			<artifactId>webstore-manager-mapper</artifactId>
