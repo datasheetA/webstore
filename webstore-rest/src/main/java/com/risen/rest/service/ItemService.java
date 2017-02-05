@@ -14,4 +14,18 @@ public interface ItemService {
 	 * @return
 	 */
 	Result getItemBaseInfo(long itemId);
+	
+	/**
+	 * 取商品描述
+	 * @param itemId
+	 * @return
+	 */
+	Result getItemDesc(long itemId);
+	
+	/**
+	 * 取商品规格参数
+	 * @param itemId
+	 * @return
+	 */
+	Result getItemParam(long itemId);
 }

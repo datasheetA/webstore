@@ -27,10 +27,34 @@ public class ItemController {
 	 * @param itemId
 	 * @return
 	 */
-	@RequestMapping("/info/{itemId}")
+	@RequestMapping("/base/{itemId}")
 	@ResponseBody
 	public Result getItemBaseInfo(@PathVariable Long itemId){
 		Result result = itemService.getItemBaseInfo(itemId);
+		return result;
+	}
+	
+	/**
+	 * 取商品描述
+	 * @param itemId
+	 * @return
+	 */
+	@RequestMapping("/desc/{itemId}")
+	@ResponseBody
+	public Result getItemDesc(@PathVariable Long itemId){
+		Result result = itemService.getItemDesc(itemId);
+		return result;
+	}
+	
+	/**
+	 * 取商品规格参数
+	 * @param itemId
+	 * @return
+	 */
+	@RequestMapping("/param/{itemId}")
+	@ResponseBody
+	public Result getItemParam(@PathVariable Long itemId){
+		Result result = itemService.getItemParam(itemId);
 		return result;
 	}
 }
