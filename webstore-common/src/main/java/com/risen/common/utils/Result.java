@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 淘淘商城自定义响应结构
+ * 商城自定义响应结构
  */
 public class Result {
 

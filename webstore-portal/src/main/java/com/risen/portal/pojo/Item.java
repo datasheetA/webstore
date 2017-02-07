@@ -52,5 +52,11 @@ public class Item {
 		this.item_desc = item_desc;
 	}
 	
-	
+	public String[] getImages() {
+		if (image != null) {
+			String[] images = image.split(",");
+			return images;
+		}
+		return null;
+	}
 }
