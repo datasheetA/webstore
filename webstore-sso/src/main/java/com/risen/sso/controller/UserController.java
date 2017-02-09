@@ -130,4 +130,20 @@ public class UserController {
 			return handleCallback(result, callback);
 		}
 	}
+	
+	/**
+	 * 用户退出
+	 * @param token
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping("/logout/{token}")
+	@ResponseBody
+	public Object userLogout(@PathVariable String token,String callback){
+		//调用service
+		Result result = userService.userLogout(token);
+		//处理jsonp
+		return handleCallback(result, callback);
+		
+	}
 }

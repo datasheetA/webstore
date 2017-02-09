@@ -143,5 +143,14 @@ public class UserServiceImpl implements UserService{
 		
 		return Result.ok(JsonUtil.jsonToPojo(json, TbUser.class));
 	}
+	/**
+	 * 用户退出
+	 */
+	@Override
+	public Result userLogout(String token) {
+		//根据token删除用户登录信息
+		redisDao.del(REDIS_USER_SESSION_KEY + ":" + token);
+		return Result.ok();
+	}
 
 }

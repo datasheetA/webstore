@@ -43,4 +43,11 @@ public interface UserService {
 	 * @return
 	 */
 	public Result getUserByToken(String token);
+	
+	/**
+	 * 用户退出
+	 * @param token
+	 * @return
+	 */
+	public Result userLogout(String token);
 }
