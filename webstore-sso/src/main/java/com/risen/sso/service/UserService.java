@@ -36,4 +36,11 @@ public interface UserService {
 	 * @return
 	 */
 	public Result userLogin(String username,String password,HttpServletRequest request,HttpServletResponse response);
+	
+	/**
+	 * 根据token从redis中查询用户信息
+	 * @param token
+	 * @return
+	 */
+	public Result getUserByToken(String token);
 }

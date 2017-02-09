@@ -7,13 +7,20 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import com.risen.common.utils.CookieUtils;
+import com.risen.common.utils.JsonUtil;
 import com.risen.common.utils.Result;
+import com.risen.common.utils.UUIDGenerator;
 import com.risen.mapper.TbUserMapper;
 import com.risen.pojo.TbUser;
 import com.risen.pojo.TbUserExample;
 import com.risen.pojo.TbUserExample.Criteria;
+import com.risen.sso.dao.RedisDao;
 import com.risen.sso.service.UserService;
 
 /**
@@ -21,10 +28,20 @@ import com.risen.sso.service.UserService;
  * @author sen
  *
  */
+@Service
 public class UserServiceImpl implements UserService{
 	
 	@Resource
 	private TbUserMapper userMapper;
+	
+	@Resource
+	private RedisDao redisDao;
+	
+	@Value("${REDIS_USER_SESSION_KEY}")
+	private String REDIS_USER_SESSION_KEY;
+	
+	@Value("${USER_SESSION_EXPIRE}")
+	private Integer USER_SESSION_EXPIRE;
 	
 	/**
 	 * 检查注册信息是否可用
@@ -97,9 +114,34 @@ public class UserServiceImpl implements UserService{
 			return Result.build(400, "用户名或密码错误");
 		}
 		//用户登录信息正确
+		//生成token
+		String token=UUIDGenerator.getLong();
+		//保存用户信息之前，将用户密码清空
+		user.setPassword(null);
+		//将token及用户信息写入redis
+		redisDao.set(REDIS_USER_SESSION_KEY + ":" +token, JsonUtil.objectToJson(user));
+		//设置session的过期时间
+		redisDao.expire(REDIS_USER_SESSION_KEY + ":" +token, USER_SESSION_EXPIRE);
 		
+		//将token写入cookie，cookie失效时间与session相同
+		CookieUtils.setCookie(request, response, "US_TOKEN", token);
+		return Result.ok(token);
+	}
+	
+	/**
+	 * 根据token从redis中查询用户信息
+	 */
+	@Override
+	public Result getUserByToken(String token) {
+		//查询
+		String json = redisDao.get(REDIS_USER_SESSION_KEY + ":" +token); 
+		if(StringUtils.isBlank(json)){
+			return Result.build(400, "无效的token");
+		}
+		//更新过期时间
+		redisDao.expire(REDIS_USER_SESSION_KEY + ":" +token, USER_SESSION_EXPIRE);
 		
-		return null;
+		return Result.ok(JsonUtil.jsonToPojo(json, TbUser.class));
 	}
 
 }
