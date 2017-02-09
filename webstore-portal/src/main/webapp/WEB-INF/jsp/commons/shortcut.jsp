@@ -74,3 +74,6 @@
 		<span class="clr"></span>
 	</div>
 </div>
+
+<script type="text/javascript" src="/js/jquery-1.6.4.js"></script>
+<script type="text/javascript" src="/js/test.js" charset="utf-8"></script>
