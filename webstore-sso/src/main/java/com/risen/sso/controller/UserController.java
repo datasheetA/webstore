@@ -100,6 +100,7 @@ public class UserController {
 				  HttpServletRequest request,HttpServletResponse response){
 		
 		try {
+			//调用service
 			Result result=userService.userLogin(username, password, request, response);
 			return result;
 		} catch (Exception e) {
@@ -117,7 +118,7 @@ public class UserController {
 	 */
 	@RequestMapping("/token/{token}")
 	@ResponseBody
-	public Object getUserByToken(String token,String callback){
+	public Object getUserByToken(@PathVariable String token,String callback){
 		try {
 			//执行查询
 			Result result=userService.getUserByToken(token);

@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService{
 		//根据用户名查询用户信息
 		List<TbUser> list = userMapper.selectByExample(example);
 		//判断
-		if(list == null || list.size()>0){
+		if(list == null || list.size() == 0){
 			//没有此用户
 			return Result.build(400, "用户名或密码错误");
 		}
