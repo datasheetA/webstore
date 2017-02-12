@@ -27,9 +27,15 @@
 	
 	<!-- 拦截器 -->
 	<mvc:interceptors>
+		<!-- 订单请求拦截器 -->
 		<mvc:interceptor>
-			<mvc:mapping path="/item/**"/>
+			<mvc:mapping path="/order/**"/>
 			<bean class="com.risen.portal.interceptor.LoginInterceptor"></bean>
+		</mvc:interceptor>
+		<!-- 购物车请求拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/cart/**"/>
+			<bean class="com.risen.portal.interceptor.CartInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
 	
