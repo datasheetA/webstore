@@ -301,7 +301,7 @@
 	});
 	
 	function addCartItem(id){
-		var num=$("buy-num").val();
+		var num=$("#buy-num").val();
 		return location.href = "/cart/add/"+id+".html"+"?num="+num;
 	}
 </script>

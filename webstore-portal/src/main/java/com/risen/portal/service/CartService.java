@@ -32,4 +32,12 @@ public interface CartService {
 	 * 从redis中取购物车列表
 	 */
 	List<CartItem> redisGetCartList(String userId);
+	/**
+	 * 根据商品id 从cookie中删除单条购物车商品
+	 */
+	void deleteInCookie(long itemId,HttpServletRequest request,HttpServletResponse response);
+	/**
+	 * 根据商品id 从redis中删除单条购物车商品
+	 */
+	void deleteInRedis(String userId,long itemId,HttpServletRequest request,HttpServletResponse response);
 }
