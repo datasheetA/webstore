@@ -83,6 +83,13 @@ public class CartController {
 		return "cart";
 	}
 	
+	/**
+	 * 删除购物车商品
+	 * @param itemId
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping("/delete/{itemId}")
 	public String deleteCartItem(@PathVariable long itemId,HttpServletRequest request,HttpServletResponse response){
 		//从request中取用户id
@@ -96,5 +103,16 @@ public class CartController {
 			cartService.deleteInRedis(obj.toString(), itemId, request, response);
 		}
 		return "redirect:/cart/cart.html";
+	}
+	
+	/**
+	 * 用户登录后将用户cookie中的购物车信息同步到redis
+	 */
+	@RequestMapping("/sync")
+	public void syncCart(String userId,String cart){
+		
+		//调用service
+		cartService.syncCart(userId, cart);
+		
 	}
 }

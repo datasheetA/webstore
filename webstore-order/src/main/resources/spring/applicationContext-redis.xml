@@ -57,5 +57,5 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 			</set>
 		</constructor-arg>
 	</bean>
-	<bean id="redisDao" class="com.risen.rest.common.impl.ClusterRedisDao"></bean>
+	<bean id="redisDao" class="com.risen.common.dao.impl.ClusterRedisDao"></bean>
 </beans>

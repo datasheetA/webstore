@@ -40,4 +40,9 @@ public interface CartService {
 	 * 根据商品id 从redis中删除单条购物车商品
 	 */
 	void deleteInRedis(String userId,long itemId,HttpServletRequest request,HttpServletResponse response);
+	/**
+	 * 用户登录后将用户cookie中的购物车信息同步到redis
+	 */
+	public void syncCart(String userId,String cart);
+	
 }

@@ -1,7 +1,9 @@
 package com.risen.sso.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import com.risen.common.utils.CookieUtils;
+import com.risen.common.utils.HttpClientUtil;
 import com.risen.common.utils.JsonUtil;
 import com.risen.common.utils.Result;
 import com.risen.common.utils.UUIDGenerator;
@@ -22,6 +25,7 @@ import com.risen.pojo.TbUserExample;
 import com.risen.pojo.TbUserExample.Criteria;
 import com.risen.sso.dao.RedisDao;
 import com.risen.sso.service.UserService;
+
 
 /**
  * 用户相关 service层
@@ -37,11 +41,17 @@ public class UserServiceImpl implements UserService{
 	@Resource
 	private RedisDao redisDao;
 	
+	//用户登录后 在redis中保存的用户信息的key值
 	@Value("${REDIS_USER_SESSION_KEY}")
 	private String REDIS_USER_SESSION_KEY;
 	
+	//用户session的过期时间
 	@Value("${USER_SESSION_EXPIRE}")
 	private Integer USER_SESSION_EXPIRE;
+	
+	//用户登录 购物车信息同步url
+	@Value("${CART_SYNC_URL}")
+	private String CART_SYNC_URL;
 	
 	/**
 	 * 检查注册信息是否可用
@@ -95,6 +105,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Result userLogin(String username, String password,
 				  HttpServletRequest request,HttpServletResponse response) {
+		
 		//查询条件
 		TbUserExample example=new TbUserExample();
 		Criteria criteria = example.createCriteria();
@@ -125,6 +136,17 @@ public class UserServiceImpl implements UserService{
 		
 		//将token写入cookie，cookie失效时间与session相同
 		CookieUtils.setCookie(request, response, "US_TOKEN", token);
+		
+		//将用户cookie中的购物车信息同步到redis中
+		Map<String,String> param=new HashMap<String, String>();
+		String cart = CookieUtils.getCookieValue(request, "MY_CART");
+		param.put("userId", user.getId()+"");
+		if(!StringUtils.isBlank(cart)){
+			
+			param.put("cart", cart);
+		}
+		HttpClientUtil.doPost(CART_SYNC_URL, param);
+
 		return Result.ok(token);
 	}
 	
@@ -152,5 +174,6 @@ public class UserServiceImpl implements UserService{
 		redisDao.del(REDIS_USER_SESSION_KEY + ":" + token);
 		return Result.ok();
 	}
-
+	
+	
 }

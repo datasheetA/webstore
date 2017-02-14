@@ -16,7 +16,7 @@
     	</a><b></b>
    	</div>
 </div>
-<form id="formlogin" method="post" onsubmit="return false;">
+<form id="formlogin" method="post">
     <div class=" w1" id="entry">
         <div class="mc " id="bgDiv">
             <div id="entry-bg" clstag="passport|keycount|login|02" style="width: 511px; height: 455px; position: absolute; left: -44px; top: -44px; background: url(/images/544a11d3Na5a3d566.png) 0px 0px no-repeat;">
@@ -75,19 +75,24 @@
 				return true;
 			},
 			doLogin:function() {
-				$.post("/user/login", $("#formlogin").serialize(),function(data){
-					if (data.status == 200) {
-						alert("登录成功！");
-						if (redirectUrl == "") {
-							location.href = "http://localhost:8082";
-						} else {
-							location.href = redirectUrl;
-						}
-					} else {
-						alert("登录失败，原因是：" + data.msg);
-						$("#loginname").select();
-					}
-				});
+				  $.ajax({
+					url : "http://localhost:8084/user/login",
+					data : $("#formlogin").serialize(),
+					type : "POST",
+					dataType : "json",
+					success : function(data){
+								if (data.status == 200) {
+									if (redirectUrl == "") {
+										location.href = "http://localhost:8082";
+									} else {
+										location.href = redirectUrl;
+									}
+								} else {
+									alert("登录失败，原因是：" + data.msg);
+									$("#loginname").select();
+								}
+							}
+				});  
 			},
 			login:function() {
 				if (this.checkInput()) {

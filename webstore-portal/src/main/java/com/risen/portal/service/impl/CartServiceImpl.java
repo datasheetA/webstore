@@ -1,7 +1,9 @@
 package com.risen.portal.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -213,6 +215,40 @@ public class CartServiceImpl implements CartService {
 		}
 		//将购物车重新写入redis
 		redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(list));
+		
+	}
+	
+	/**
+	 * 用户登录后将用户cookie中的购物车信息同步到redis
+	 */
+	@Override
+	public void syncCart(String userId,String cart) {
+		//从cookie中取购物车信息
+		List<CartItem> cList=null;
+		if(StringUtils.isBlank(cart)){
+			cList=new ArrayList<CartItem>();
+		}else{
+			cList=JsonUtil.jsonToList(cart, CartItem.class);
+		}
+		//从redis中取购物车信息
+		List<CartItem> rList = redisGetCartList(userId);
+		//如果cookie中有购物车信息则进行同步
+		if(cList.size()>0){
+			//判断用户在redis中的购物车信息是否为空
+			if(rList.size()>0){
+				//将两个购物车信息加入set中 去重(已根据id重写CartItem的equals方法)
+				Set<CartItem> set=new HashSet<CartItem>(rList);
+				set.addAll(cList);
+				//同步后的购物车列表
+				List<CartItem> list=new ArrayList<CartItem>(set);
+				//将购物车信息写入redis
+				redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(list));
+				
+			}else{
+				//如果redis中用户的购物车为空，直接将cookie的购物车信息写入redis即可
+				redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(cList));
+			}
+		}
 		
 	}
 

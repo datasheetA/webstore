@@ -13,8 +13,8 @@
 	<!-- 依赖管理 -->
 	<dependencies>
 		<dependency>
-			<groupId>com.taotao</groupId>
-			<artifactId>taotao-manager-mapper</artifactId>
+			<groupId>com.risen</groupId>
+			<artifactId>webstore-manager-mapper</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Spring -->
