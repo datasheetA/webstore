@@ -1,5 +1,8 @@
 package com.risen.common.dao;
 
+import java.util.List;
+import java.util.Map;
+
 public interface RedisDao {
 	
 	
@@ -19,5 +22,11 @@ public interface RedisDao {
 	
 	long del(String key);
 	
-	long hdel(String hkey,String key);
+	long hdel(String hkey,String...fields);
+	
+	Map<String,String> hgetAll(String key);
+	
+	List<String> hmget(String key,String...fields);
+	
+	String hmset(String key,Map<String,String> hash);
 }

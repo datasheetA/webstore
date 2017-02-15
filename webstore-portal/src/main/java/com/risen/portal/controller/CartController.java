@@ -1,6 +1,9 @@
 package com.risen.portal.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -8,11 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.risen.common.utils.JsonUtil;
 import com.risen.portal.pojo.CartItem;
 import com.risen.portal.service.CartService;
 
@@ -75,7 +78,14 @@ public class CartController {
 			cartList=cartService.cookieGetCartList(request);
 		}else{
 			//用户已登录，从redis中取购物车信息
-			cartList=cartService.redisGetCartList(obj.toString());
+			Map<String,String> cartMap=cartService.redisGetCartMap(obj.toString());
+			//将map转换成list以供页面渲染
+			cartList=new ArrayList<CartItem>();
+			CartItem cartItem=null;
+			for(Entry<String,String> e:cartMap.entrySet()){
+				cartItem=JsonUtil.jsonToPojo(e.getValue(), CartItem.class);
+				cartList.add(cartItem);
+			}
 		}
 		
 		//将购物车信息传递给页面
@@ -100,7 +110,7 @@ public class CartController {
 			cartService.deleteInCookie(itemId, request, response);
 		}else{
 			//用户已登录，操作redis
-			cartService.deleteInRedis(obj.toString(), itemId, request, response);
+			cartService.deleteInRedis(obj.toString(), itemId);
 		}
 		return "redirect:/cart/cart.html";
 	}

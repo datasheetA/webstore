@@ -1,5 +1,8 @@
 package com.risen.common.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import com.risen.common.dao.RedisDao;
@@ -76,12 +79,38 @@ public class SingleRedisDao implements RedisDao {
 		return result;
 	}
 
+
 	@Override
-	public long hdel(String hkey, String key) {
+	public long hdel(String hkey, String... fields) {
 		Jedis jedis=jedisPool.getResource();
-		Long result = jedis.hdel(hkey, key);
+		Long result = jedis.hdel(hkey, fields);
 		jedis.close();
 		return result;
 	}
+
+	@Override
+	public Map<String, String> hgetAll(String key) {
+		Jedis jedis=jedisPool.getResource();
+		Map<String,String> result = jedis.hgetAll(key);
+		jedis.close();
+		return result;
+	}
+
+	@Override
+	public List<String> hmget(String key, String... fields) {
+		Jedis jedis=jedisPool.getResource();
+		List<String> list = jedis.hmget(key, fields);
+		jedis.close();
+		return list;
+	}
+
+	@Override
+	public String hmset(String key, Map<String, String> hash) {
+		Jedis jedis=jedisPool.getResource();
+		String result = jedis.hmset(key, hash);
+		jedis.close();
+		return result;
+	}
+	
 
 }

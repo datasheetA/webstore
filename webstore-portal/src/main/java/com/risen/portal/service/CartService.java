@@ -1,6 +1,7 @@
 package com.risen.portal.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +32,7 @@ public interface CartService {
 	/**
 	 * 从redis中取购物车列表
 	 */
-	List<CartItem> redisGetCartList(String userId);
+	Map<String,String> redisGetCartMap(String userId);
 	/**
 	 * 根据商品id 从cookie中删除单条购物车商品
 	 */
@@ -39,7 +40,7 @@ public interface CartService {
 	/**
 	 * 根据商品id 从redis中删除单条购物车商品
 	 */
-	void deleteInRedis(String userId,long itemId,HttpServletRequest request,HttpServletResponse response);
+	void deleteInRedis(String userId,long itemId);
 	/**
 	 * 用户登录后将用户cookie中的购物车信息同步到redis
 	 */

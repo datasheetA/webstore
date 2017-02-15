@@ -1,9 +1,9 @@
 package com.risen.portal.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -60,20 +60,69 @@ public class CartServiceImpl implements CartService {
 		String userId=(String) request.getAttribute("userId");
 		
 		//从redis中取购物车信息
-		List<CartItem> list = redisGetCartList(userId);
+		Map<String, String> cartMap = redisGetCartMap(userId);
 		
 		//检查此商品是否已存在与购物车，如果存在改变其数量即可，
-		//见函数itemExist(List<CartItem> list,long itemId,boolean flag)
-		boolean flag = itemExist(list, itemId, num);
+		//见函数redisItemExist(Map<String,String> map,long itemId,int num)
+		boolean flag = redisItemExist(cartMap, itemId, num);
 		
 		//当购物车为空 或者购物车无此商品，将此商品加入购物车
-		//见函数addItem(List<CartItem> list,long itemId,boolean flag)
-		addItem(list, itemId, num, flag);
+		if(!flag){
+			//创建购物车商品条目
+			CartItem cartItem=getCartItem(itemId, num);
+			//加入购物车
+			cartMap.put(itemId+"", JsonUtil.objectToJson(cartItem));
+		}
 		
 		//将用户购物车重新写入redis
-		redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(list));
+		redisDao.hmset(CART_REDIS_KEY + userId,cartMap);
 		
 	}
+	
+	/**
+	 * 判断目标商品在redis购物车中是否已存在
+	 * @return
+	 */
+	private boolean redisItemExist(Map<String,String> map,long itemId,int num){
+		
+		//根据id从购物车中取
+		String json = map.get(itemId);
+		if(!StringUtils.isBlank(json)){
+			CartItem item = JsonUtil.jsonToPojo(json, CartItem.class);
+			//更改购物车中商品的数量
+			item.setNum(item.getNum()+num);
+			//重新写入购物车
+			map.put(itemId+"", JsonUtil.objectToJson(item));
+			//商品在购物车中已存在
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 根据itemId和num得到一个cartItem对象
+	 * @param itemId
+	 * @return
+	 */
+	private CartItem getCartItem(long itemId,int num){
+		
+		CartItem cartItem =new CartItem();
+		//根据商品id调用rest服务查询商品信息
+		String json = HttpClientUtil.doGet(ITEM_BASE_URL + itemId);
+		//转换为Result对象
+		Result result = Result.formatToPojo(json, TbItem.class);
+		if(result != null && result.getStatus()==200){
+			TbItem item=(TbItem) result.getData();
+			//设置属性值
+			cartItem.setId(item.getId());
+			cartItem.setImage(item.getImage().split(",")[0]);
+			cartItem.setNum(num);
+			cartItem.setPrice(item.getPrice());
+			cartItem.setTitle(item.getTitle());
+		}
+		return cartItem;
+	}
+	
 	
 	/**
 	 * 添加商品入购物车，用户未登录
@@ -89,9 +138,13 @@ public class CartServiceImpl implements CartService {
 		boolean flag=itemExist(list, itemId, num);
 		
 		//当购物车为空 或者购物车无此商品，将此商品加入购物车
-		//见函数addItem(List<CartItem> list,long itemId,boolean flag)
-		addItem(list, itemId, num, flag);
-		
+		if(!flag){
+			//创建一个购物车条目
+			CartItem cartItem = getCartItem(itemId, num);
+			//加入购物车
+			list.add(cartItem);
+			
+		}
 		//将购物车重新写入cookie
 		CookieUtils.setCookie(request, response,CART_COOKIE_KEY, JsonUtil.objectToJson(list), CART_COOKIE_MAXAGE);
 	}
@@ -115,15 +168,14 @@ public class CartServiceImpl implements CartService {
 	 * 从redis中取购物车列表
 	 */
 	@Override
-	public List<CartItem> redisGetCartList(String userId) {
+	public Map<String,String> redisGetCartMap(String userId) {
 		// 从redis中取用户购物车信息
-		String json = redisDao.get(CART_REDIS_KEY + userId);
+		Map<String, String> cartMap = redisDao.hgetAll(CART_REDIS_KEY + userId);
 		//判断购物车是否为空
-		if(!StringUtils.isBlank(json)){
-			List<CartItem> list = JsonUtil.jsonToList(json, CartItem.class);
-			return list;
+		if(cartMap != null && cartMap.size()>0){
+			return cartMap;
 		}
-		return new ArrayList<CartItem>();
+		return new HashMap<String,String>();
 	}
 	
 	/**
@@ -148,31 +200,7 @@ public class CartServiceImpl implements CartService {
 		return flag;
 	}
 	
-	/**
-	 * 将目标商品加入购物车
-	 */
-	private void addItem(List<CartItem> list,long itemId,int num,boolean flag){
-		//购物车无此商品 或者购物车为空
-		if(!flag){
-			//根据商品id调用rest服务查询商品信息
-			String json = HttpClientUtil.doGet(ITEM_BASE_URL + itemId);
-			//转换为Result对象
-			Result result = Result.formatToPojo(json, TbItem.class);
-			if(result != null && result.getStatus()==200){
-				TbItem item=(TbItem) result.getData();
-				CartItem cartItem =new CartItem();
-				//设置属性值
-				cartItem.setId(item.getId());
-				cartItem.setImage(item.getImage().split(",")[0]);
-				cartItem.setNum(num);
-				cartItem.setPrice(item.getPrice());
-				cartItem.setTitle(item.getTitle());
-				//将此商品写入购物车
-				list.add(cartItem);
-			}
-			
-		}
-	}
+	
 	
 	/**
 	 * 从cookie中删除购物车商品
@@ -203,18 +231,13 @@ public class CartServiceImpl implements CartService {
 	 * @param response
 	 */
 	@Override
-	public void deleteInRedis(String userId,long itemId, HttpServletRequest request, HttpServletResponse response) {
+	public void deleteInRedis(String userId,long itemId) {
 		// 从redis中取出购物车列表
-		List<CartItem> list = redisGetCartList(CART_REDIS_KEY + userId);
+		Map<String, String> cartMap = redisGetCartMap(CART_REDIS_KEY + userId);
 		//删除指定商品
-		for (CartItem cartItem : list) {
-			if(cartItem.getId()== itemId){
-				list.remove(cartItem);
-				break;
-			}
-		}
+		cartMap.remove(itemId);
 		//将购物车重新写入redis
-		redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(list));
+		redisDao.hmset(CART_REDIS_KEY + userId, cartMap);
 		
 	}
 	
@@ -224,30 +247,20 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public void syncCart(String userId,String cart) {
 		//从cookie中取购物车信息
-		List<CartItem> cList=null;
+		List<CartItem> list=null;
 		if(StringUtils.isBlank(cart)){
-			cList=new ArrayList<CartItem>();
+			list=new ArrayList<CartItem>();
 		}else{
-			cList=JsonUtil.jsonToList(cart, CartItem.class);
+			list=JsonUtil.jsonToList(cart, CartItem.class);
 		}
 		//从redis中取购物车信息
-		List<CartItem> rList = redisGetCartList(userId);
+		Map<String,String> map= redisGetCartMap(userId);
 		//如果cookie中有购物车信息则进行同步
-		if(cList.size()>0){
-			//判断用户在redis中的购物车信息是否为空
-			if(rList.size()>0){
-				//将两个购物车信息加入set中 去重(已根据id重写CartItem的equals方法)
-				Set<CartItem> set=new HashSet<CartItem>(rList);
-				set.addAll(cList);
-				//同步后的购物车列表
-				List<CartItem> list=new ArrayList<CartItem>(set);
-				//将购物车信息写入redis
-				redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(list));
-				
-			}else{
-				//如果redis中用户的购物车为空，直接将cookie的购物车信息写入redis即可
-				redisDao.set(CART_REDIS_KEY + userId, JsonUtil.objectToJson(cList));
+		if(list.size()>0){
+			for (CartItem cartItem : list) {
+				map.put(cartItem.getId()+"", JsonUtil.objectToJson(cartItem));
 			}
+			
 		}
 		
 	}

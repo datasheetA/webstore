@@ -1,5 +1,8 @@
 package com.risen.common.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import com.risen.common.dao.RedisDao;
@@ -52,8 +55,23 @@ public class ClusterRedisDao implements RedisDao {
 	}
 
 	@Override
-	public long hdel(String hkey, String key) {
-		return jedisCluster.hdel(key, key);
+	public long hdel(String hkey, String...fileds) {
+		return jedisCluster.hdel(hkey, fileds);
 	}
 
+	@Override
+	public Map<String, String> hgetAll(String key) {
+		return jedisCluster.hgetAll(key);
+	}
+
+	@Override
+	public List<String> hmget(String key, String... fields) {
+		return jedisCluster.hmget(key, fields);
+	}
+
+	@Override
+	public String hmset(String key, Map<String, String> hash) {
+		return jedisCluster.hmset(key, hash);
+	}
+	
 }

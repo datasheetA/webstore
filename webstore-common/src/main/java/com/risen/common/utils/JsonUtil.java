@@ -1,13 +1,14 @@
 package com.risen.common.utils;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 淘淘商城自定义响应结构
+ * json和java的转换工具类
  */
 public class JsonUtil {
 
@@ -61,6 +62,24 @@ public class JsonUtil {
     	try {
     		List<T> list = MAPPER.readValue(jsonData, javaType);
     		return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+    
+    /**
+     * 将json转换成Map<Stirng,T>
+     * @param jsonData
+     * @param beanType
+     * @return
+     */
+    public static <T>Map<String,T> jsonToMap(String jsonData,Class<T> beanType){
+    	JavaType javaType = MAPPER.getTypeFactory().constructParametricType(Map.class,String.class, beanType);
+    	try {
+    		Map<String,T> map = MAPPER.readValue(jsonData, javaType);
+    		return map;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
