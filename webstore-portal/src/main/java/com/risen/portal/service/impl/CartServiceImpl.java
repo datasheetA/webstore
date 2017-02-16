@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -260,9 +261,44 @@ public class CartServiceImpl implements CartService {
 			for (CartItem cartItem : list) {
 				map.put(cartItem.getId()+"", JsonUtil.objectToJson(cartItem));
 			}
-			
 		}
 		
+	}
+	
+	/**
+	 * 从redis中取用户购物车信息。并转换成list
+	 */
+	@Override
+	public List<CartItem> redisGetCartList(String userId) {
+		//取出购物车
+		Map<String, String> cartMap = redisGetCartMap(userId);
+		//将map转换成list以供页面渲染
+		List<CartItem> cartList=new ArrayList<CartItem>();
+		if(cartMap.size()>0){
+			CartItem cartItem=null;
+			for(Entry<String,String> e:cartMap.entrySet()){
+				cartItem=JsonUtil.jsonToPojo(e.getValue(), CartItem.class);
+				cartList.add(cartItem);
+			}
+		}
+		return cartList;
+	}
+	
+	/**
+	 * 根据多个id取购物车条目列表
+	 */
+	@Override
+	public List<CartItem> getCartByIds(String ids, String userId) {
+		
+		//将多个id拼成的字符串转成数组
+		String[] arr = ids.split(",");
+		List<String> list = redisDao.hmget(CART_REDIS_KEY + userId, arr);
+		//将list中的json格式的CartItem转成对象
+		List<CartItem> cartList=new ArrayList<CartItem>();
+		for(String json:list){
+			cartList.add(JsonUtil.jsonToPojo(json, CartItem.class));
+		}
+		return cartList;
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.risen.common.utils.Result;
 import com.risen.portal.pojo.CartItem;
 
 /**
@@ -30,9 +29,13 @@ public interface CartService {
 	 */
 	List<CartItem> cookieGetCartList(HttpServletRequest request);
 	/**
-	 * 从redis中取购物车列表
+	 * 从redis中取用户购物车全部信息
 	 */
 	Map<String,String> redisGetCartMap(String userId);
+	/**
+	 * 从redis中取用户购物车信息，并转换成List
+	 */
+	List<CartItem> redisGetCartList(String userId);
 	/**
 	 * 根据商品id 从cookie中删除单条购物车商品
 	 */
@@ -44,6 +47,10 @@ public interface CartService {
 	/**
 	 * 用户登录后将用户cookie中的购物车信息同步到redis
 	 */
-	public void syncCart(String userId,String cart);
+	void syncCart(String userId,String cart);
+	/**
+	 * 根据多个id取出购物车条目列表
+	 */
+	List<CartItem> getCartByIds(String ids,String userId);
 	
 }
