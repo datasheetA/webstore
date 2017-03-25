@@ -2,12 +2,11 @@ package com.risen.rest.service.impl;
 
 import javax.annotation.Resource;
 
+import com.risen.common.dao.RedisDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.risen.common.utils.ExceptionUtil;
 import com.risen.common.utils.Result;
-import com.risen.rest.dao.RedisDao;
 import com.risen.rest.service.RedisSyncService;
 
 /**
@@ -26,13 +25,7 @@ public class RedisSyncServiceImpl implements RedisSyncService{
 	
 	@Override
 	public Result syncContent(long categoryId) {
-		try {
-			
 		redisDao.hdel(hkey, categoryId+"");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Result.build(500, ExceptionUtil.getStackTrace(e));
-		}
 		return Result.ok();
 	}
 	

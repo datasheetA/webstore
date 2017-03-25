@@ -32,12 +32,7 @@ public class ContentController {
 	@RequestMapping("/content/list/{categoryId}")
 	@ResponseBody
 	public Result getContentList(@PathVariable Long categoryId){
-		try{
-			List<TbContent> list = contentService.getContentList(categoryId);
-			return Result.ok(list);
-		}catch(Exception e){
-			e.printStackTrace();
-			return Result.build(500, ExceptionUtil.getStackTrace(e));
-		}
+		List<TbContent> list = contentService.getContentList(categoryId);
+		return Result.ok(list);
 	}
 }

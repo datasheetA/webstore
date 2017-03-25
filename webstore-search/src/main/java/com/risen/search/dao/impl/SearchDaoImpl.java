@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -33,13 +34,18 @@ public class SearchDaoImpl implements SearchDao {
 	 * 查询索引库
 	 */
 	@Override
-	public SolrSearchResult search(SolrQuery solrQuery) throws Exception {
+	public SolrSearchResult search(SolrQuery solrQuery) {
 		
 		//返回值对象
 		SolrSearchResult result=new SolrSearchResult();
 		
 		//根据查询条件查询索引库
-		QueryResponse queryResponse = solrServer.query(solrQuery);
+		QueryResponse queryResponse = null;
+		try {
+			queryResponse = solrServer.query(solrQuery);
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		}
 		//取查询结果列表
 		SolrDocumentList list = queryResponse.getResults();
 		//取查询结果总数

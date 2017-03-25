@@ -21,7 +21,7 @@ public class SearchServiceImpl implements SearchService {
 	private SearchDao searchDao;
 	
 	@Override
-	public SolrSearchResult search(String queryString, int page, int rows) throws Exception {
+	public SolrSearchResult search(String queryString, int page, int rows) {
 		//创建查询对象
 		SolrQuery solrQuery=new SolrQuery();
 		//设置查询条件
@@ -38,7 +38,12 @@ public class SearchServiceImpl implements SearchService {
 		solrQuery.setHighlightSimplePost("</em>");
 		
 		//执行查询
-		SolrSearchResult searchResult = searchDao.search(solrQuery);
+		SolrSearchResult searchResult = null;
+		try {
+			searchResult = searchDao.search(solrQuery);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		//计算总页数
 		long numFound=searchResult.getNumFound();
 		long totalPage=numFound/rows;

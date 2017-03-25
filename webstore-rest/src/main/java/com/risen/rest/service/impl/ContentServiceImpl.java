@@ -4,17 +4,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.risen.common.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.risen.common.utils.JsonUtil;
 import com.risen.mapper.TbContentMapper;
 import com.risen.pojo.TbContent;
 import com.risen.pojo.TbContentExample;
 import com.risen.pojo.TbContentExample.Criteria;
-import com.risen.rest.dao.RedisDao;
 import com.risen.rest.service.ContentService;
 
 /**
@@ -39,39 +38,28 @@ public class ContentServiceImpl implements ContentService {
 	 */
 	@Override
 	public List<TbContent> getContentList(long categoryId) {
-		
 		/*
 		 * 从缓存中取内容
 		 */
-		try {
-			String cacheStr=redisDao.hget(hkey, categoryId+"");
-			if(!StringUtils.isBlank(cacheStr)){
-				//将字符串转化成list
-				List<TbContent> list = JsonUtil.jsonToList(cacheStr, TbContent.class);
-				return list;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		String cacheStr=redisDao.hget(hkey, categoryId+"");
+		if(!StringUtils.isBlank(cacheStr)){
+			//将字符串转化成list
+			List<TbContent> list = JsonUtil.jsonToList(cacheStr, TbContent.class);
+			return list;
 		}
-		
+
 		//设置查询条件
 		TbContentExample example=new TbContentExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andCategoryIdEqualTo(categoryId);
 		//执行查询
 		List<TbContent> list = contentMapper.selectByExample(example);
-		
 		/*
 		 * 把内容添加到缓存中
 		 */
-		try {
-			//把内容列表（list）转成字符串
-			String cacheStr=JsonUtil.objectToJson(list);
-			redisDao.hset(hkey, categoryId+"", cacheStr);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		String cacheStr2=JsonUtil.objectToJson(list);
+		redisDao.hset(hkey, categoryId+"", cacheStr2);
+
 		return list;
 	}
 

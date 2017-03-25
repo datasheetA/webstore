@@ -14,6 +14,8 @@ import com.risen.common.utils.Result;
 import com.risen.search.pojo.SolrSearchResult;
 import com.risen.search.service.SearchService;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * 搜索服务控制层
  * @author sen
@@ -39,11 +41,9 @@ public class SearchController {
 		try {
 			queryString=new String(queryString.getBytes("iso8859-1"),"utf-8");
 			searchResult = searchService.search(queryString, page, rows);
-		} catch (Exception e) {
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			return Result.build(500, ExceptionUtil.getStackTrace(e));
 		}
-		
 		return Result.ok(searchResult);
 	}
 	

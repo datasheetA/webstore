@@ -70,7 +70,7 @@ public class ItemCatServiceImpl implements ItemCatService {
 				resultList.add(catNode);
 				count++;
 				
-				//第一层只去14条记录
+				//第一层只取14条记录
 				if(parentId==0 && count >=14){
 					break;
 				}

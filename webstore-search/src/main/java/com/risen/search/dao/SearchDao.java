@@ -7,5 +7,5 @@ import com.risen.search.pojo.SolrSearchResult;
 public interface SearchDao {
 	
 	
-	SolrSearchResult search(SolrQuery solrQuery) throws Exception;
+	SolrSearchResult search(SolrQuery solrQuery);
 }

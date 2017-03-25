@@ -15,5 +15,5 @@ public interface SearchService {
 	 * @param rows 分页条件
 	 * @return
 	 */
-	SolrSearchResult search(String queryString,int page,int rows)throws Exception;
+	SolrSearchResult search(String queryString,int page,int rows);
 }

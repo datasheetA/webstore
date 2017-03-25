@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.risen.common.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,9 @@ import com.risen.mapper.TbItemMapper;
 import com.risen.mapper.TbItemParamItemMapper;
 import com.risen.pojo.TbItem;
 import com.risen.pojo.TbItemDesc;
-import com.risen.pojo.TbItemDescExample;
 import com.risen.pojo.TbItemParamItem;
 import com.risen.pojo.TbItemParamItemExample;
 import com.risen.pojo.TbItemParamItemExample.Criteria;
-import com.risen.rest.dao.RedisDao;
 import com.risen.rest.service.ItemService;
 
 /**
