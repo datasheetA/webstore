@@ -79,13 +79,8 @@ public class UserController {
 	@ResponseBody
 	public Result userRegister(TbUser user){
 		
-		try {
-			Result result= userService.userRegister(user);
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Result.build(500, ExceptionUtil.getStackTrace(e));
-		}
+		Result result= userService.userRegister(user);
+		return result;
 	}
 	
 	/**
@@ -98,16 +93,10 @@ public class UserController {
 	@ResponseBody
 	public Result userLogin(String username,String password,
 				  HttpServletRequest request,HttpServletResponse response){
-		
-		try {
-			//调用service
-			Result result=userService.userLogin(username, password, request, response);
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Result.build(500,ExceptionUtil.getStackTrace(e));
-		}
-		
+		//调用service
+		Result result=userService.userLogin(username, password, request, response);
+		return result;
+
 	}
 	
 	/**
@@ -119,16 +108,10 @@ public class UserController {
 	@RequestMapping("/token/{token}")
 	@ResponseBody
 	public Object getUserByToken(@PathVariable String token,String callback){
-		try {
-			//执行查询
-			Result result=userService.getUserByToken(token);
-			//处理jsonp
-			return handleCallback(result, callback);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Result result=Result.build(500, ExceptionUtil.getStackTrace(e));
-			return handleCallback(result, callback);
-		}
+		//执行查询
+		Result result=userService.getUserByToken(token);
+		//处理jsonp
+		return handleCallback(result, callback);
 	}
 	
 	/**
@@ -144,6 +127,5 @@ public class UserController {
 		Result result = userService.userLogout(token);
 		//处理jsonp
 		return handleCallback(result, callback);
-		
 	}
 }

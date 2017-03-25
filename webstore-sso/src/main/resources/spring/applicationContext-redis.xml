@@ -1,61 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:context="http://www.springframework.org/schema/context"
-xmlns:mvc="http://www.springframework.org/schema/mvc"
-xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-xmlns:jee="http://www.springframework.org/schema/jee"
-xmlns:aop="http://www.springframework.org/schema/aop"
-xmlns:tx="http://www.springframework.org/schema/tx"
 xsi:schemaLocation="http://www.springframework.org/schema/beans
-					http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-					http://www.springframework.org/schema/context
-					http://www.springframework.org/schema/context/spring-context-4.3.xsd
-					http://www.springframework.org/schema/mvc
-					http://www.springframework.org/schema/mvc/spring-mvc.xsd
-					http://www.springframework.org/schema/tx
-					http://www.springframework.org/schema/tx/spring-tx.xsd
-					http://www.springframework.org/schema/aop
-					http://www.springframework.org/schema/aop/spring-aop.xsd">
+       				http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- redis单机版配置 -->
-	<!-- <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-		<constructor-arg name="port" value="6379"></constructor-arg>
-	</bean>  
-	<bean id="redisDao" class="com.risen.sso.dao.impl.SingleRedisDao"></bean>
-	-->
-	
+	 <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		 <constructor-arg index="0" ref="jedisPoolConfig"/>
+		 <constructor-arg index="1" value="192.168.1.114"/>
+		 <constructor-arg index="2" value="6379"/>
+		 <constructor-arg index="3" value="2000"/>
+		 <constructor-arg index="4" value="xixi01"/>
+	</bean>
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig"/>
+	<bean id="redisDao" class="com.risen.common.dao.impl.SingleRedisDao"/>
+
 	<!-- redis集群版配置 -->
-	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
-		<constructor-arg name="nodes">
+	<!--<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+		<constructor-arg>
 			<set>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7001"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7001"></constructor-arg>
 				</bean>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7002"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7002"></constructor-arg>
 				</bean>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7003"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7003"></constructor-arg>
 				</bean>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7004"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7004"></constructor-arg>
 				</bean>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7005"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7005"></constructor-arg>
 				</bean>
 				<bean class="redis.clients.jedis.HostAndPort">
-					<constructor-arg name="host" value="192.168.1.114"></constructor-arg>
-					<constructor-arg name="port" value="7006"></constructor-arg>
+					<constructor-arg index="0" value="192.168.1.114"></constructor-arg>
+					<constructor-arg index="1" value="7006"></constructor-arg>
 				</bean>
 			</set>
 		</constructor-arg>
 	</bean>
-	<bean id="redisDao" class="com.risen.sso.dao.impl.ClusterRedisDao"></bean>
+	<bean id="redisDao" class="com.risen.common.dao.impl.ClusterRedisDao"/>-->
 </beans>

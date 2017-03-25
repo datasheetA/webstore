@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.risen.common.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,6 @@ import com.risen.mapper.TbUserMapper;
 import com.risen.pojo.TbUser;
 import com.risen.pojo.TbUserExample;
 import com.risen.pojo.TbUserExample.Criteria;
-import com.risen.sso.dao.RedisDao;
 import com.risen.sso.service.UserService;
 
 
