@@ -3,5 +3,4 @@
 /.settings/
 .project
 .classpath
-webstore-sso.iml
 src/test/

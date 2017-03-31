@@ -176,7 +176,7 @@ public class CartServiceImpl implements CartService {
 		if(cartMap != null && cartMap.size()>0){
 			return cartMap;
 		}
-		return new HashMap<String,String>();
+		return new HashMap<>();
 	}
 	
 	/**
@@ -227,9 +227,8 @@ public class CartServiceImpl implements CartService {
 	
 	/**
 	 * 从redis中删除购物车商品
+	 * @param userId
 	 * @param itemId
-	 * @param request
-	 * @param response
 	 */
 	@Override
 	public void deleteInRedis(String userId,long itemId) {
@@ -250,7 +249,7 @@ public class CartServiceImpl implements CartService {
 		//从cookie中取购物车信息
 		List<CartItem> list=null;
 		if(StringUtils.isBlank(cart)){
-			list=new ArrayList<CartItem>();
+			list=new ArrayList<>();
 		}else{
 			list=JsonUtil.jsonToList(cart, CartItem.class);
 		}
@@ -262,7 +261,8 @@ public class CartServiceImpl implements CartService {
 				map.put(cartItem.getId()+"", JsonUtil.objectToJson(cartItem));
 			}
 		}
-		
+		//将购物车重新写入redis
+		redisDao.hmset(CART_REDIS_KEY + userId, map);
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public class CartServiceImpl implements CartService {
 		String[] arr = ids.split(",");
 		List<String> list = redisDao.hmget(CART_REDIS_KEY + userId, arr);
 		//将list中的json格式的CartItem转成对象
-		List<CartItem> cartList=new ArrayList<CartItem>();
+		List<CartItem> cartList=new ArrayList<>();
 		for(String json:list){
 			cartList.add(JsonUtil.jsonToPojo(json, CartItem.class));
 		}

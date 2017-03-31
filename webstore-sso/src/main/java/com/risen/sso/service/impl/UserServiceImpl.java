@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService{
 		CookieUtils.setCookie(request, response, "US_TOKEN", token);
 		
 		//将用户cookie中的购物车信息同步到redis中
-		Map<String,String> param=new HashMap<String, String>();
+		Map<String,String> param=new HashMap<>();
 		String cart = CookieUtils.getCookieValue(request, "MY_CART");
 		param.put("userId", user.getId()+"");
 		if(!StringUtils.isBlank(cart)){

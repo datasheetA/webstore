@@ -1,7 +1,1 @@
-/target/
-/.idea/
-/.settings/
-.project
-.classpath
-webstore-sso.iml
-src/test/
+webstore-common.iml

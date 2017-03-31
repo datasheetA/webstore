@@ -3,5 +3,5 @@
 /.settings/
 .project
 .classpath
-webstore-order.iml
+*.iml
 src/test/
