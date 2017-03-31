@@ -1,10 +1,12 @@
 package com.risen.search.service.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +35,8 @@ public class ItemServiceImpl implements ItemService {
 	 */
 	@Override
 	public Result importAll() {
-		try{
 		//查询商品列表
+		try {
 		List<Item> list = itemMapper.getItemList();
 		//循环把商品信息写入索引库
 		for (Item item : list) {
@@ -51,10 +53,10 @@ public class ItemServiceImpl implements ItemService {
 			solrServer.add(document);
 		}
 		//提交修改
-		solrServer.commit();
-		}catch(Exception e){
+
+			solrServer.commit();
+		} catch (SolrServerException | IOException e) {
 			e.printStackTrace();
-			return Result.build(500, ExceptionUtil.getStackTrace(e));
 		}
 		return Result.ok();
 	}
